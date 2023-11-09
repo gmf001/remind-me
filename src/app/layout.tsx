@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 import ThemeProvider from "@/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
               <main className="dark:bg-neutral-950 flex flex-grow pt-6 w-full justify-center">
                 {children}
               </main>
+              <Toaster />
             </div>
           </ThemeProvider>
         </ClerkProvider>

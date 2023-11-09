@@ -1,3 +1,5 @@
+import { CollectionCard } from "@/components/CollectionCard";
+import CreateCollectionBtn from "@/components/CreateCollectionBtn";
 import SadIcon from "@/components/icons/SadIcon";
 import {
   Alert,
@@ -6,7 +8,6 @@ import {
 } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/lib/prisma";
-import { wait } from "@/lib/wait";
 import { currentUser } from "@clerk/nextjs";
 import { Suspense } from "react";
 
@@ -16,7 +17,9 @@ export default async function Home() {
       <Suspense fallback={<WelcomeLoader />}>
         <WelcomeMessage />
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={<div className="text-neutral-500">Loading...</div>}
+      >
         <CollectionList />
       </Suspense>
     </>
@@ -25,7 +28,6 @@ export default async function Home() {
 
 async function WelcomeMessage() {
   const user = await currentUser();
-  await wait(500);
 
   if (!user) {
     return (
@@ -37,12 +39,14 @@ async function WelcomeMessage() {
 
   return (
     <div className="flex w-full mb-12">
-      <h1 className="text-4xl font-bold dark:text-neutral-200">
-        <span className="dark:text-neutral-400 text-neutral-500 text-3xl">
+      <div className="flex flex-col space-y-2">
+        <span className="text-neutral-500 font-bold text-3xl">
           Welcome,
         </span>{" "}
-        <br /> {user.firstName} {user.lastName}
-      </h1>
+        <h1 className="text-4xl font-bold dark:text-neutral-200">
+          {user.firstName} {user.lastName}
+        </h1>
+      </div>
     </div>
   );
 }
@@ -51,9 +55,7 @@ function WelcomeLoader() {
   return (
     <div className="flex w-full mb-12">
       <div className="text-4xl font-bold dark:text-neutral-200 flex flex-col space-y-2">
-        <span className="dark:text-neutral-400 text-neutral-500 text-3xl">
-          Welcome,
-        </span>
+        <span className="text-neutral-500 text-3xl">Welcome,</span>
         <div className="flex space-x-2">
           <Skeleton className="w-[150px] h-[36px]" />
           <Skeleton className="w-[150px] h-[36px]" />
@@ -69,6 +71,13 @@ async function CollectionList() {
     where: {
       userId: user?.id,
     },
+    include: {
+      tasks: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
   });
 
   if (collections.length === 0) {
@@ -81,8 +90,19 @@ async function CollectionList() {
             Create a collection to get started
           </AlertDescription>
         </Alert>
-        <CreateCollectionButton />
+        <CreateCollectionBtn />
       </div>
     );
   }
+
+  return (
+    <>
+      <CreateCollectionBtn />
+      <div className="flex flex-col gap-4 w-full mt-6">
+        {collections.map((collection) => (
+          <CollectionCard key={collection.id} collection={collection} />
+        ))}
+      </div>
+    </>
+  );
 }

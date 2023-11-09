@@ -9,5 +9,6 @@ This is a simple reminder app that allows users to create reminders and set a ti
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Clerk Auth](https://clerk.dev/)
-- [Postgres](https://www.postgresql.org/)
+- [Vercel Postgres](https://vercel.com/docs/solutions/postgres)
+- [Prisma](https://www.prisma.io/)
 - [ShadcnUI](https://ui.shadcn.com/)
